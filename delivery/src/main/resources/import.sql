@@ -1,0 +1,2 @@
+INSERT INTO delivery (id                , created , restaurantId                           , orderContent         , customerId                             , customerName , street     , city   , zip     , state) VALUES
+('ae76a6b6-cf3e-4a5a-9888-ac0bdff0ec2b' , now()   , 'c59121fb-e62f-4126-8aa9-f0a60af1120e' , 'Bun bo Nam Bo: 1ks' , '72612a7e-6feb-4fdb-af4e-48940171657c' , 'Pepa Novak' , 'Ulice 33' , 'Brno' , '61500' , 'CREATED');
