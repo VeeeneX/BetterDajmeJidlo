@@ -1,7 +1,1 @@
-# better-dajme-jidlo
-
-
-## Setup
-```
-
-```
+better-dajme-jidlo
