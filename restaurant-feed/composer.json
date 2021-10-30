@@ -1,0 +1,7 @@
+{
+    "require": {
+        "jzonta/faker-restaurant": "^2.0",
+        "fakerphp/faker": "^1.16",
+        "ramsey/uuid": "^4.2"
+    }
+}
