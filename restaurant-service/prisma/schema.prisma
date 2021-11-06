@@ -27,12 +27,12 @@ model Restaurant {
 }
 
 model Food {
-  id           String      @id @default(uuid())
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  name         String
-  basePrice    Float
-  ingredients  String[]
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  basePrice   Float
+  ingredients String[]
 
   restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
   restaurantId String?
