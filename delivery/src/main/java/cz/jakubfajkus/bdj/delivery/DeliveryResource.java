@@ -43,9 +43,11 @@ public class DeliveryResource {
     @POST
     public Uni<Response> create(@Valid Delivery delivery) {
         Uni<Delivery> deliveryUni = Panache.withTransaction(delivery::persist);
-        deliveryUni.onItem().invoke(inserted -> notificationSender.stateChanged(inserted));
 
-        return deliveryUni.onItem().transform(inserted -> Response.created(URI.create("/delivery/" + inserted.getId())).build());
+        return deliveryUni.onItem().transform(inserted -> {
+            notificationSender.stateChanged(inserted);
+            return Response.created(URI.create("/delivery/" + inserted.getId())).build();
+        });
     }
 
     @PATCH

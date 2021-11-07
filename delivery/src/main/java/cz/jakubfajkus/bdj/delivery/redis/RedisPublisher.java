@@ -25,6 +25,7 @@ public class RedisPublisher {
         redis.publish("notifications", notification)
                 .subscribe()
                 .with(
+                        item -> log.info("Notification successful: " + notification),
                         failure -> log.error("Failed to send notification: " + notification)
                 );
 
