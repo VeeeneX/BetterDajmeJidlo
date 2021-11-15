@@ -1,10 +1,8 @@
 package cz.jakubfajkus.bdj.delivery.redis;
 
+import io.micrometer.core.annotation.Counted;
 import io.quarkus.redis.client.RedisClientName;
 import io.quarkus.redis.client.reactive.ReactiveRedisClient;
-import io.smallrye.common.annotation.Blocking;
-import io.smallrye.mutiny.Uni;
-import io.vertx.mutiny.redis.client.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +19,7 @@ public class RedisPublisher {
     private static final Logger log = LoggerFactory.getLogger(RedisPublisher.class);
 
 
+    @Counted(value = "notificationsSent", description = "How many notification have been sent")
     public void sendNotification(String notification) {
         redis.publish("notifications", notification)
                 .subscribe()

@@ -1,5 +1,7 @@
 package cz.jakubfajkus.bdj.delivery;
 
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.panache.common.Sort;
 import io.smallrye.mutiny.Uni;
@@ -17,6 +19,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
@@ -41,6 +44,8 @@ public class DeliveryResource {
     }
 
     @POST
+    @Counted(value = "ordersCreated", description = "How many orders have been created")
+    @Timed
     public Uni<Response> create(@Valid Delivery delivery) {
         Uni<Delivery> deliveryUni = Panache.withTransaction(delivery::persist);
 
@@ -60,6 +65,25 @@ public class DeliveryResource {
                 )
                 .onItem().ifNotNull().transform(entity -> Response.ok(entity).build())
                 .onItem().ifNull().continueWith(Response.ok().status(NOT_FOUND)::build);
+    }
+
+
+    @POST
+    @Path("/advance")
+    public Uni<Response> advanceRandomOrder() {
+        var state = Delivery.State.values()[new Random().nextInt(Delivery.State.values().length)];
+
+        if (state.getNextState() == null) {
+            return Uni.createFrom().item(Response.ok("No next state " + state).build());
+        }
+
+        return Panache
+                .withTransaction(() -> Delivery.findFirstByState(state)
+                        .onItem().ifNotNull().invoke(entity -> entity.setState(state.getNextState()))
+                        .onItem().ifNotNull().invoke(entity -> notificationSender.stateChanged(entity))
+                )
+                .onItem().ifNotNull().transform(entity -> Response.ok(entity).build())
+                .onItem().ifNull().continueWith(Response.ok("No delivery found for state " + state).status(NOT_FOUND)::build);
     }
 
 }

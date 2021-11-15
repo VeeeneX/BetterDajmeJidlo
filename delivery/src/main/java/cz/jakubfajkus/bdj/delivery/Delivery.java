@@ -1,6 +1,7 @@
 package cz.jakubfajkus.bdj.delivery;
 
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
+import io.smallrye.mutiny.Uni;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -74,11 +75,26 @@ public class Delivery extends PanacheEntityBase {
     private State state = State.CREATED;
 
 
+    public static Uni<Delivery> findFirstByState(State state) {
+        return find(Fields.state, state).firstResult();
+    }
+
+
     @Getter
     @AllArgsConstructor
     public enum State {
-        CREATED, ACCEPTED, PREPARED, DISPATCHED, DELIVERED, CANCELED
+        CANCELED(null),
+
+        DELIVERED(null),
+        DISPATCHED(DELIVERED),
+        PREPARED(DISPATCHED),
+        ACCEPTED(PREPARED),
+        CREATED(ACCEPTED);
+
+        private State nextState;
+
     }
+
 
 }
 

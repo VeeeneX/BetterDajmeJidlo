@@ -10,7 +10,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 @QuarkusTest
-public class ReactiveGreetingResourceTest {
+public class DeliveriesTest {
 
     @Test
     public void testGetAllDeliveriesReturnsDefaultDelivery() {
