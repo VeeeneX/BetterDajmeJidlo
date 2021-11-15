@@ -16,3 +16,18 @@ services:
     image: redis:6-alpine
     ports:
       - 127.0.0.1:6379:6379
+
+  prometheus:
+    image: prom/prometheus:v2.31.1
+    container_name: prometheus
+    command: "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:Z
+    network_mode: host
+
+  grafana:
+    image: grafana/grafana:8.2.3
+    ports:
+      - 3000:3000
+    network_mode: host
+    container_name: grafana
