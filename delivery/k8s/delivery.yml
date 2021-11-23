@@ -1,0 +1,79 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/port: "8080"
+    prometheus.io/scheme: http
+    app.quarkus.io/commit-id: d841583867483610ac56d1167137d242e41742b7
+    app.quarkus.io/build-timestamp: 2021-11-23 - 15:44:51 +0000
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /q/metrics
+  labels:
+    app.kubernetes.io/name: delivery
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  name: delivery
+spec:
+  ports:
+    - name: http
+      nodePort: 31234
+      port: 80
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: delivery
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    prometheus.io/port: "8080"
+    prometheus.io/scheme: http
+    app.quarkus.io/commit-id: d841583867483610ac56d1167137d242e41742b7
+    app.quarkus.io/build-timestamp: 2021-11-23 - 15:44:51 +0000
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /q/metrics
+  labels:
+    app.kubernetes.io/name: delivery
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  name: delivery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: delivery
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scheme: http
+        app.quarkus.io/commit-id: d841583867483610ac56d1167137d242e41742b7
+        app.quarkus.io/build-timestamp: 2021-11-23 - 15:44:51 +0000
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /q/metrics
+      labels:
+        app.kubernetes.io/name: delivery
+        app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    spec:
+      containers:
+        - env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+
+            - name: QUARKUS_DATASOURCE_REACTIVE_URL
+              value: "postgresql://delivery-pgsql:5432/delivery"
+
+            - name: QUARKUS_REDIS_NOTIFICATIONS_HOSTS
+              value: "redis://eventbus:6379"
+
+          image: jakubf/delivery:1.0.0-SNAPSHOT
+          imagePullPolicy: IfNotPresent
+          name: delivery
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP

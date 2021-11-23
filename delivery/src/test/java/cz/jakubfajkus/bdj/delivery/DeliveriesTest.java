@@ -34,8 +34,7 @@ public class DeliveriesTest {
                 .body(Delivery.Fields.customerName, equalTo("Pepa Novak"))
                 .body(Delivery.Fields.street, equalTo("Ulice 33"))
                 .body(Delivery.Fields.city, equalTo("Brno"))
-                .body(Delivery.Fields.zip, equalTo("61500"))
-                .body(Delivery.Fields.state, equalTo(Delivery.State.CREATED.name()));
+                .body(Delivery.Fields.zip, equalTo("61500"));
     }
 
     @Test
