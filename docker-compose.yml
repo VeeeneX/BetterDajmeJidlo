@@ -20,9 +20,9 @@ services:
   prometheus:
     image: prom/prometheus:v2.31.1
     container_name: prometheus
-    command: "--config.file=/etc/prometheus/prometheus.yml"
+    command: "--config.file=/etc/prometheus/prometheus-config.yaml"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:Z
+      - ./prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml:Z
     network_mode: host
 
   grafana:
