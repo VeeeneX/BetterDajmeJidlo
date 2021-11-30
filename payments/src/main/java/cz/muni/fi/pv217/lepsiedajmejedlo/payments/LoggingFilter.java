@@ -10,8 +10,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
-import static net.logstash.logback.argument.StructuredArguments.value;
-
 @Slf4j
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -36,6 +34,6 @@ public class LoggingFilter implements WebFilter {
         log.info("{} uri={} status={} request_id={} audit={} - {} ms",
                 exchange.getRequest().getMethod(), exchange.getRequest().getPath(),
                 overriddenStatus, exchange.getRequest().getId(),
-                value("audit", true), duration);
+                true, duration);
     }
 }

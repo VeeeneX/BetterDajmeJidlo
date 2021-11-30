@@ -13,10 +13,11 @@ services:
 
   payments:
     container_name: payments
-    image: payments-service:latest
+    image: payments-service-native:latest
     ports:
       - '8080:8080'
     environment:
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATA_MONGODB_URI=mongodb://172.17.0.1:27017/payment-service?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000
     depends_on:
       - mongo

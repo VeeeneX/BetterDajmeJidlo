@@ -5,13 +5,9 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.*;
 import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration;
 import org.springframework.data.mongodb.config.EnableReactiveMongoAuditing;
-import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -19,9 +15,9 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Configuration
-@EnableReactiveMongoAuditing
 @EnableTransactionManagement
+@EnableReactiveMongoAuditing
+@Configuration(proxyBeanMethods = false)
 @PropertySource(value = "classpath:application.properties")
 @EnableReactiveMongoRepositories(basePackages = {"cz.muni.fi.pv217.lepsiedajmejedlo.payments"})
 public class PersistenceConfig extends AbstractReactiveMongoConfiguration {
@@ -33,7 +29,6 @@ public class PersistenceConfig extends AbstractReactiveMongoConfiguration {
     private String mongoDatabaseName;
 
     @Override
-    @Bean(name = "reactiveMongoClient")
     public MongoClient reactiveMongoClient() {
         MongoClient mongoClient = MongoClients.create(mongoUri);
 
@@ -52,18 +47,16 @@ public class PersistenceConfig extends AbstractReactiveMongoConfiguration {
         return mongoDatabaseName;
     }
 
-    @Bean(name = "reactiveMongoTemplate")
-    public ReactiveMongoTemplate reactiveMongoTemplate() {
-        return new ReactiveMongoTemplate(reactiveMongoClient(), getDatabaseName());
-    }
-
     @Bean
-    public ValidatingMongoEventListener validatingMongoEventListener() {
-        return new ValidatingMongoEventListener(validator());
-    }
-
-    @Bean
+    @Primary
     public LocalValidatorFactoryBean validator() {
         return new LocalValidatorFactoryBean();
+    }
+
+    @Bean
+    @Primary
+    @DependsOn({"validator"})
+    public ValidatingMongoEventListener validatingMongoEventListener(LocalValidatorFactoryBean validator) {
+        return new ValidatingMongoEventListener(validator);
     }
 }
