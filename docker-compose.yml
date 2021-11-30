@@ -1,0 +1,29 @@
+version: "3.1"
+
+services:
+  restaurant-database:
+    image: postgres:13-alpine
+    ports:
+      - 127.0.0.1:5432:5432
+    environment:
+      - POSTGRES_USER=restaurant
+      - POSTGRES_DB=restaurant
+      - POSTGRES_PASSWORD=restaurant
+    volumes:
+      - /var/lib/postgresql/data
+
+  order-database:
+    image: postgres:13-alpine
+    ports:
+      - 127.0.0.1:5433:5432
+    environment:
+      - POSTGRES_USER=order
+      - POSTGRES_DB=order
+      - POSTGRES_PASSWORD=order
+    volumes:
+      - /var/lib/postgresql/data
+
+  event-bus:
+    image: redis:6-alpine
+    ports:
+      - 127.0.0.1:6379:6379

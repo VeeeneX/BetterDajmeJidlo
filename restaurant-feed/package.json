@@ -1,0 +1,19 @@
+{
+  "name": "restaurant-feed",
+  "version": "1.0.0",
+  "description": "Feed for database service",
+  "main": "index.js",
+  "scripts": {
+    "start": "json-server mock/db.json --port 3001"
+  },
+  "keywords": [
+    "feed",
+    "json",
+    "mock"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "json-server": "^0.17.0"
+  }
+}
