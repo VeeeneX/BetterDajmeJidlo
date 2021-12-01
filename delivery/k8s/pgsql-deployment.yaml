@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: delivery-pgsql
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: delivery-pgsql
+  clusterIP: None #diky tohoto se nam do DNS prida zaznam se jmenem... vsude se tak muzeme na tento deployemnt odkazovat timto jmenem
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: delivery-pgsql
+spec:
+  selector:
+    matchLabels:
+      app: delivery-pgsql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: delivery-pgsql
+    spec:
+      containers:
+        - image: postgres:13-alpine
+          name: delivery-pgsql
+          env:
+            - name: POSTGRES_USER
+              value: delivery
+            - name: POSTGRES_DB
+              value: delivery
+            - name: POSTGRES_PASSWORD
+              value: delivery
+          ports:
+            - containerPort: 5432
+              name: delivery-pgsql
+          volumeMounts:
+            - name: delivery-pgsql-persistent-storage
+              mountPath: /var/lib/pgsqlql/data
+      volumes:
+        - name: delivery-pgsql-persistent-storage
+          persistentVolumeClaim:
+            claimName: delivery-pgsql-persistent-storage-pv-claim
