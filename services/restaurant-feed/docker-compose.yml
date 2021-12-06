@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  restaurant-feed:
+    container_name: restaurant-feed
+    image: restaurant-feed:latest
+    build: .
+    command: [ "--watch", "/data/db.json" ]
+    ports:
+      - '127.0.20.2:80:3000'
+    volumes:
+      - ./mock:/data

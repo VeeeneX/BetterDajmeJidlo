@@ -1,0 +1,22 @@
+version: "3.8"
+
+networks:
+  better-dajme-jidlo:
+    external: true
+
+services:
+  restaurant-service-migrate:
+    image: restaurant-service:latest
+    command: npx prisma migrate deploy
+    networks:
+      - better-dajme-jidlo
+    environment:
+      - DATABASE_URL=postgresql://bdj:bdj@postgres/bdj?schema=public
+
+  order-service-migrate:
+    image: order-service:latest
+    command: npx prisma migrate deploy
+    networks:
+      - better-dajme-jidlo
+    environment:
+      - DATABASE_URL=postgresql://bdj:bdj@postgres/bdj?schema=public

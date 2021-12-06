@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  restaurant-service:
+    container_name: restaurant-service
+    image: restaurant-service:latest
+    build:
+      context: .
+    ports:
+      - '127.0.20.3:80:3000'

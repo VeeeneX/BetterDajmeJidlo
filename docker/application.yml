@@ -1,0 +1,69 @@
+version: "3.8"
+
+networks:
+  better-dajme-jidlo:
+    external: true
+
+services:
+  user-service:
+    image: user-service:latest
+    networks:
+      - better-dajme-jidlo
+    ports:
+      - '127.0.20.1:80:3000'
+
+  restaurant-feed:
+    image: restaurant-feed:latest
+    networks:
+      - better-dajme-jidlo
+    ports:
+      - '127.0.20.2:80:3000'
+
+  restaurant-service:
+    image: restaurant-service:latest
+    ports:
+      - '127.0.20.3:80:3000'
+    networks:
+      - better-dajme-jidlo
+    environment:
+      - DATABASE_URL=postgresql://bdj:bdj@postgres/bdj?schema=public
+      - FEED_URL=http://restaurant-feed:3000
+
+  payment-service:
+    image: payment-service:latest
+    ports:
+      - '127.0.20.4:80:8080'
+    networks:
+      - better-dajme-jidlo
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo/payment-service?serverSelectionTimeoutMS=5000
+
+  notification-service:
+    image: notification-service:latest
+    ports:
+      - '127.0.20.5:80:8080'
+    networks:
+      - better-dajme-jidlo
+    environment:
+      - QUARKUS_REDIS_NOTIFICATIONS_HOSTS=redis://redis
+
+  billing-service:
+    image: billing-service:latest
+    ports:
+      - '127.0.20.6:80:8080'
+    networks:
+      - better-dajme-jidlo
+    environment:
+      - RESTAURANT_SERVICE_URL=http://restaurant-service:3000
+      - USER_SERVICE_URL=http://user-service:3000
+      - MINIO_URL=http://MW32h3gd6HvjBEgTRx:t6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7@minio
+
+  order-service:
+    image: order-service:latest
+    ports:
+      - '127.0.20.7:80:8080'
+    networks:
+      - better-dajme-jidlo
+    environment:
+      - QUARKUS_REDIS_NOTIFICATIONS_HOSTS=redis://redis

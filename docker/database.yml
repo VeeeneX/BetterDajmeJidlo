@@ -1,0 +1,47 @@
+version: "3.8"
+
+volumes:
+  invoice-storage:
+
+networks:
+  better-dajme-jidlo:
+    external: true
+
+services:
+  minio:
+    image: minio/minio
+    ports:
+      - '127.0.20.0:9000:9000'
+    environment:
+      MINIO_ROOT_USER: 'MW32h3gd6HvjBEgTRx'
+      MINIO_ROOT_PASSWORD: 't6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7'
+    volumes:
+      - invoice-storage:/data
+    command: server /data
+
+  redis:
+    image: redis:6.0-alpine
+    networks:
+      - better-dajme-jidlo
+    ports:
+      - '127.0.20.0:6379:6379'
+
+  postgres:
+    image: postgres:13-alpine
+    networks:
+      - better-dajme-jidlo
+    ports:
+      - '127.0.20.0:5432:5432'
+    environment:
+      - POSTGRES_USER=bdj
+      - POSTGRES_PASSWORD=bdj
+      - POSTGRES_DB=bdj
+
+  mongo:
+    image: mongo:latest
+    networks:
+      - better-dajme-jidlo
+    ports:
+      - '127.0.20.0:27017:27017'
+    environment:
+      - MONGO_INITDB_DATABASE=payment-service
