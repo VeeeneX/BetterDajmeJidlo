@@ -1,5 +1,7 @@
 /** source/server.ts */
 import express, { Express } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import * as swaggerDocument from '../source/swagger/openapi.json';
 import morganMiddleware from './config/morgan';
 import routes from './routes/invoices';
 
@@ -28,6 +30,9 @@ router.use((req, res, next) => {
 
 /** Routes */
 router.use('/', routes);
+
+router.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 /** Error handling */
 router.use((req, res, next) => {
