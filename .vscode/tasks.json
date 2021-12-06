@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+    {
+      "type": "npm",
+      "script": "start",
+      "path": "restaurant-feed/",
+      "problemMatcher": [],
+      "label": "Restaurant feed",
+      "detail": "json-server mock/db.json --port 3001"
+    },
+    {
+      "type": "npm",
+      "script": "start:dev",
+      "path": "order-service/",
+      "problemMatcher": [],
+      "label": "Order service",
+      "detail": "nest start --watch"
+    },
+    {
+      "type": "npm",
+      "script": "start:dev",
+      "path": "restaurant-service/",
+      "problemMatcher": [],
+      "label": "Restaurant service",
+      "detail": "nest start --watch"
+    },
+  ]
+}
