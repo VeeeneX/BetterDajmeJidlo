@@ -138,6 +138,10 @@
 								<builder>paketobuildpacks/builder:tiny</builder>
 								<env>
 									<BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+									<BP_NATIVE_IMAGE_BUILD_ARGUMENTS>
+										-H:IncludeResourceBundles=com.sun.org.apache.xml.internal.res.XMLErrorResources
+										-H:IncludeResourceBundles=sun.util.resources.LocaleNames
+									</BP_NATIVE_IMAGE_BUILD_ARGUMENTS>
 								</env>
 							</image>
 						</configuration>
