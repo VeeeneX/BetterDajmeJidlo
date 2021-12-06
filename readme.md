@@ -1,10 +1,20 @@
-# Better dajme jidlo
-
-Monorepo of Better dajme jidlo
-
-## Services
+# BetterDajmeJidlo
 
 
+
+For anyone who is hungry enough BetterDajmeJidlo provides fast and simple way to order your favorite food. Just choose any restaurant you like and thanks to our modern infrastructure you will be notified during whole process of delivering your dream food.  
+  
+This project was created as a part of the course PV217 - Service oriented architecture. It demonstrates usage of a microservice architecture concept and their advantage in selected abilities. In addition, well known services can be found and are used by this project like Redis serving as a eventbus, Graphana providing data monitoring and visualisation, Postgresql and Mongodb operating within data layer while Minio being used as S3 storage. Project consist of these services:  
+
+1. Order Service
+2. Restaurant Service
+3. Delivery Managment Service
+4. Payments Service
+5. Billing Service  
+6. Notification Service
+<br></br>
+**Simplified project diagram:**  
+  
 ![](./docs/diagram.png)
 
 ## Build
