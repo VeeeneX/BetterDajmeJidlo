@@ -30,7 +30,7 @@ public class PaymentsEndpoint {
         this.paymentsService = paymentsService;
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema)),
             @ApiResponse(responseCode = "409", description = "Conflict", content = @Content(schema = @Schema))})
@@ -49,7 +49,7 @@ public class PaymentsEndpoint {
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
     @ResponseStatus(value = HttpStatus.OK)
     public Flux<Payment> getAll() {

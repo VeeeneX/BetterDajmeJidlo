@@ -41,14 +41,14 @@ public class CreditsEndpoint {
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
     @ResponseStatus(value = HttpStatus.OK)
     public Flux<UserCredits> getAll() {
         return creditsService.getAllCredits();
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema)),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema))})
