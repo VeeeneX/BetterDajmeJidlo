@@ -1,0 +1,20 @@
+# 1. Top credits to user
+PUT payment.service.local/payments/v1/credits
+Content-Type: application/json
+Accept: */*
+
+{
+  "userId": "d733fea4-54d1-4623-97bb-bbbcfae4801b",
+  "creditCount": 250
+}
+###
+
+# 2. Remove credits from account
+POST payment.service.local/payments/v1/credits
+Content-Type: application/json
+Accept: */*
+
+{
+  "userId": "d733fea4-54d1-4623-97bb-bbbcfae4801b",
+  "creditAmount": 15
+}

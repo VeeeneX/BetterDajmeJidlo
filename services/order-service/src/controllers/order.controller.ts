@@ -1,11 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Inject,
+} from '@nestjs/common';
 import { OrderService } from '../services/order.service';
 import { CreateOrderDto } from '../dto/create-order.dto';
 import { UpdateOrderDto } from '../dto/update-order.dto';
+import { OrderState } from '@prisma/client';
+import { BILLING } from '../providers/billing.provider';
+import { Got } from 'got';
+import { PAYMENT } from '../providers/payment.provider';
+import { DELIVERY } from '../providers/delivery.provider';
 
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+  ) {}
 
   @Post()
   create(@Body() createOrderDto: CreateOrderDto) {
@@ -24,7 +40,6 @@ export class OrderController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-
     return this.orderService.update(id, updateOrderDto);
   }
 

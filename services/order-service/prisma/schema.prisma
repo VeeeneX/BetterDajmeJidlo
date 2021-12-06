@@ -16,6 +16,7 @@ model Order {
   userId       String
   restaurantId String
   deliveryAddress String
+  state OrderState
 
   items     OrderItem[]
   createdAt DateTime @default(now())
@@ -34,3 +35,10 @@ model OrderItem {
   updatedAt DateTime @updatedAt
 }
 
+enum OrderState {
+  RECEIVED
+  ACCEPTED
+  REJECTED
+  PENDING
+  FULFILLED
+}

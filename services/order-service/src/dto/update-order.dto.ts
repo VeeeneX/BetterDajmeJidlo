@@ -1,14 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateOrderDto } from './create-order.dto';
-
-export enum OrderState {
-  RECEIVED,
-  ACCEPTED,
-  REJECTED,
-  PENDING,
-  FULFILLED
-}
+import { OrderState } from "@prisma/client";
 
 export class UpdateOrderDto extends PartialType(CreateOrderDto) {
-  state: OrderState
+  state: OrderState;
 }

@@ -1,6 +1,6 @@
 import { Client } from 'minio';
 
-const url = new URL(process.env.MINIO_URL)
+const url = new URL(process.env.MINIO_URL || '')
 
 const minio_client: Client = new Client({
     endPoint: url.hostname,
