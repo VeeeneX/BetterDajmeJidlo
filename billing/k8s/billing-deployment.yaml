@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: billing
+  name: billing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: billing
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: billing
+    spec:
+      containers:
+        - env:
+            - name: MINIO_ADDR
+#              value: '172.17.0.1'
+              value: minio
+            - name: MINIO_ACC_KEY
+              value: MW32h3gd6HvjBEgTRx
+            - name: MINIO_SEC_KEY
+              value: MINIO_SEC_KEY
+            - name: USER_INFO_ADDR
+#              value: '172.17.0.1'
+              value: user-info-js
+            - name: USER_INFO_PATH
+              value: users
+            - name: RESTAURANT_INFO_ADDR
+#              value: '172.17.0.1'
+              value: restauran-db-js
+            - name: RESTAURANT_INFO_PATH
+              value: restaurants
+            - name: RESTAURANT_INFO_PORT
+              value: '3000'
+            - name: USER_INFO_PORT
+              value: '3001'
+            - name: TZ
+              value: "Europe/Prague"
+          image: billing-service:latest
+          imagePullPolicy: IfNotPresent
+          name: billing
+          ports:
+            - containerPort: 6060
+              name: http
+              protocol: TCP

@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: restauran-db-js
+
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 31237
+  selector:
+    app: restauran-db-js
+  type: NodePort
+#  clusterIP: None #diky tohoto se nam do DNS prida zaznam se jmenem... vsude se tak muzeme na tento deployemnt odkazovat timto jmenem
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restauran-db-js
+spec:
+  selector:
+    matchLabels:
+      app: restauran-db-js
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: restauran-db-js
+    spec:
+      containers:
+        - image: williamyeh/json-server
+          command: [ "json-server",  "--watch", "db.json" ]
+          name: restauran-db-js
+          ports:
+            - containerPort: 3000
+              name: restauran-db-js

@@ -1,0 +1,87 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: minio-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 30Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/mnt/data/minio"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: minio-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: minio
+spec:
+  selector:
+    matchLabels:
+      app: minio
+      role: master
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: minio
+        role: master
+        tier: backend
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: minio
+          image: minio/minio
+          command: ["minio", "server", "/data/ob", "--console-address" , ":40949"]
+          env:
+            - name: MINIO_ROOT_USER
+              value: 'MW32h3gd6HvjBEgTRx'
+            - name: MINIO_ROOT_PASSWORD
+              value: 't6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7'
+          ports:
+            - containerPort: 9000
+            - containerPort: 40949
+          volumeMounts:
+            - name: data
+              mountPath: /data/ob
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: minio-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  labels:
+    app: minio
+    role: master
+    tier: backend
+spec:
+  ports:
+    - port: 9000
+      targetPort: 9000
+    - port: 40949
+      targetPort: 40949
+  selector:
+    app: minio
+    role: master
+    tier: backend
