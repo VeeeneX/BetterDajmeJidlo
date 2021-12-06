@@ -14,14 +14,13 @@
               <option value="package" />
               <option value="-Dquarkus.container-image.build=true" />
               <option value="-Dquarkus.container-image.image=delivery-service:latest" />
+              <option value="-Dquarkus.container-image.registry=" />
               <option value="-DskipTests" />
             </list>
           </option>
           <option name="pomFileName" />
           <option name="profilesMap">
-            <map>
-              <entry key="native" value="true" />
-            </map>
+            <map />
           </option>
           <option name="resolveToWorkspace" value="false" />
           <option name="workingDirPath" value="$PROJECT_DIR$/services/delivery-service" />

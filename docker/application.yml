@@ -62,10 +62,15 @@ services:
   order-service:
     image: order-service:latest
     ports:
-      - '127.0.20.7:80:80'
-    extra_hosts:
-      - "localhost:127.0.20.7"
+      - '127.0.20.7:80:3003'
     networks:
       - better-dajme-jidlo
     environment:
       - DATABASE_URL=postgresql://order_service:order_service@postgres/order_service?schema=public
+
+  delivery-service:
+    image: delivery-service:latest
+    ports:
+      - '127.0.20.8:80:8080'
+    networks:
+      - better-dajme-jidlo
