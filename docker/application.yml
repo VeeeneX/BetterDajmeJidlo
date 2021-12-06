@@ -22,7 +22,7 @@ services:
   restaurant-service:
     image: restaurant-service:latest
     ports:
-      - '127.0.20.3:80:3000'
+      - '127.0.20.3:80:3002'
     networks:
       - better-dajme-jidlo
     environment:
@@ -62,8 +62,10 @@ services:
   order-service:
     image: order-service:latest
     ports:
-      - '127.0.20.7:80:8080'
+      - '127.0.20.7:80:80'
+    extra_hosts:
+      - "localhost:127.0.20.7"
     networks:
       - better-dajme-jidlo
     environment:
-      - QUARKUS_REDIS_NOTIFICATIONS_HOSTS=redis://redis
+      - DATABASE_URL=postgresql://order_service:order_service@postgres/order_service?schema=public

@@ -36,6 +36,8 @@ services:
       - POSTGRES_USER=bdj
       - POSTGRES_PASSWORD=bdj
       - POSTGRES_DB=bdj
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
 
   mongo:
     image: mongo:latest
