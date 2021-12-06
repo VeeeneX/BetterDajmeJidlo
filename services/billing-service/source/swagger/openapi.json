@@ -1,0 +1,93 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "OpenAPI definition",
+      "version": "v0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8080",
+        "description": "Generated server url"
+      }
+    ],
+    "paths": {
+      "/invoice": {
+        "post": {
+          "tags": [
+            "payments-endpoint"
+          ],
+          "operationId": "createPayment",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceData"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "Created"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "InvoiceProduct": {
+          "required": [
+            "name",
+            "cost",
+            "quantity"
+          ],
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "cost": {
+              "type": "number"
+            },
+            "quantity": {
+              "type": "number"
+            }
+          }
+        },
+        "InvoiceData": {
+          "required": [
+            "user_id",
+            "restaurant_id",
+            "account_holder",
+            "account_number"
+          ],
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string"
+            },
+            "restaurant_id": {
+              "type": "string"
+            },
+            "account_holder": {
+              "type": "string"
+            },
+            "account_number": {
+              "type": "number"
+            },
+            "products": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/InvoiceProduct"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
