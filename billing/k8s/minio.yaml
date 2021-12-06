@@ -1,35 +1,44 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: minio-pv-volume
+  name: minio-data-pv
   labels:
     type: local
 spec:
   storageClassName: manual
   capacity:
-    storage: 30Gi
+    storage: 10Gi
   volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: "/mnt/data/minio"
+    path: "/mnt/minio"
+  claimRef:
+    namespace: default
+    name: minio-data-pvc
+
 ---
+
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: minio-pv-claim
+  name: minio-data-pvc
 spec:
   storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 30Gi
+      storage: 10Gi
+  volumeName: "minio-data-pv"
 ---
+
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
+  labels:
+    app: minio
   name: minio
 spec:
   selector:
@@ -50,7 +59,7 @@ spec:
       containers:
         - name: minio
           image: minio/minio
-          command: ["minio", "server", "/data/ob", "--console-address" , ":40949"]
+          command: ["minio", "server", "/data", "--console-address" , ":40949"]
           env:
             - name: MINIO_ROOT_USER
               value: 'MW32h3gd6HvjBEgTRx'
@@ -59,14 +68,34 @@ spec:
           ports:
             - containerPort: 9000
             - containerPort: 40949
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
           volumeMounts:
             - name: data
-              mountPath: /data/ob
+              mountPath: "/data"
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: minio-pv-claim
+            claimName: minio-data-pvc
+
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -78,9 +107,13 @@ metadata:
 spec:
   ports:
     - port: 9000
+      protocol: TCP
       targetPort: 9000
+      name: minio-main
     - port: 40949
+      protocol: TCP
       targetPort: 40949
+      name: minio-console
   selector:
     app: minio
     role: master
