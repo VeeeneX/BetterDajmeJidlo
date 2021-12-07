@@ -18,3 +18,11 @@ Accept: */*
   "userId": "d733fea4-54d1-4623-97bb-bbbcfae4801b",
   "creditAmount": 15
 }
+
+###
+
+# 2. Remove credits from account
+GET payment.service.local/payments/v1/credits/d733fea4-54d1-4623-97bb-bbbcfae4801b
+Content-Type: application/json
+Accept: */*
+

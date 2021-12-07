@@ -1,19 +1,23 @@
-import { Restaurant, Food } from ".prisma/client";
-import { Logger, Provider } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import got from 'got'
-import { RestaurantService } from "src/services/restaurant.service";
-
+import { Restaurant, Food } from '.prisma/client';
+import { FactoryProvider, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import got from 'got';
+import { RestaurantService } from 'src/services/restaurant.service';
 
 interface RestaurantWithMenu extends Restaurant {
-  uuid: string,
-  menu: Food[]
+  uuid: string;
+  menu: Food[];
 }
 
-export const importProvider = {
+export const importProvider: FactoryProvider = {
   provide: 'IMPORT',
-  useFactory: async (configService: ConfigService, restaurantService: RestaurantService) => {
-    const restaurants = await got(`${configService.get("FEED_URL")}/restaurants?_embed=menu`).json<RestaurantWithMenu[]>();
+  useFactory: async (
+    configService: ConfigService,
+    restaurantService: RestaurantService,
+  ) => {
+    const restaurants = await got(
+      `${configService.get('FEED_URL')}/restaurants?_embed=menu`,
+    ).json<RestaurantWithMenu[]>();
     for (const restaurant of restaurants) {
       await restaurantService.import({
         id: restaurant.uuid,
@@ -23,18 +27,18 @@ export const importProvider = {
         address: restaurant.address,
         minimumPrice: restaurant.minimumPrice,
         deliveryPrice: restaurant.deliveryPrice,
-      })
-      Logger.debug(`Importing ${restaurant.name}, ${restaurant.uuid}`)
-      
+      });
+      Logger.debug(`Importing ${restaurant.name}, ${restaurant.uuid}`);
+
       await restaurantService.importMenu(restaurant.uuid, {
         menu: restaurant.menu.map((f) => ({
           name: f.name,
           ingredients: f.ingredients,
           basePrice: f.basePrice,
-          restaurantId: restaurant.uuid
-        }))
-      })
+          restaurantId: restaurant.uuid,
+        })),
+      });
     }
   },
-  inject: [ConfigService, RestaurantService]
-} as Provider
+  inject: [ConfigService, RestaurantService],
+};

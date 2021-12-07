@@ -36,9 +36,9 @@ model OrderItem {
 }
 
 enum OrderState {
-  RECEIVED
+  COMPLETE
   ACCEPTED
   REJECTED
   PENDING
-  FULFILLED
+  READY
 }

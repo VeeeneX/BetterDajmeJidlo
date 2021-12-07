@@ -9,6 +9,15 @@ import { BILLING } from '../providers/billing.provider';
 import { Got } from 'got';
 import { PAYMENT } from '../providers/payment.provider';
 import { DELIVERY } from '../providers/delivery.provider';
+import { RESTAURANT } from '../providers/restaurant.provider';
+import { OrderItem } from '@prisma/client';
+
+interface Item extends OrderItem {
+  price: number;
+  name: string;
+  basePrice: number;
+  ingredients: string[];
+}
 
 @Injectable()
 export class OrderService {
@@ -17,6 +26,7 @@ export class OrderService {
     @Inject(BILLING) private readonly billing: Got,
     @Inject(PAYMENT) private readonly payment: Got,
     @Inject(DELIVERY) private readonly delivery: Got,
+    @Inject(RESTAURANT) private readonly restaurant: Got,
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
@@ -64,15 +74,50 @@ export class OrderService {
       data: updateOrderDto,
       select: {
         userId: true,
+        restaurantId: true,
+        items: {
+          select: {
+            foodId: true,
+            quantity: true,
+          },
+        },
       },
     });
 
     switch (updateOrderDto.state) {
       case OrderState.ACCEPTED:
-        await this.payment.post('/payments/v1/credits', {
+        const items: Item[] = await Promise.all(
+          order.items.map(async (i): Promise<Item> => {
+            const { data } = await this.restaurant(
+              `/restaurant/${order.restaurantId}/menu/${i.foodId}`,
+            ).json();
+            return { i, ...data, price: i.quantity * +data.basePrice };
+          }),
+        );
 
+        const price = items.reduce((a, i) => a + i.price, 0);
+
+        await this.payment.post('/payments/v1/credits', {
+          json: {
+            userId: order,
+            creditAmount: price,
+          },
         });
-      break;
+
+        await this.billing.post('/invoice', {
+          json: {
+            user_id: order.userId,
+            restaurant_id: order.restaurantId,
+            account_holder: 'John snow',
+            account_number: 3552229,
+            products: items.map((i) => ({
+              name: i.name,
+              quantity: i.quantity,
+              cost: i.basePrice,
+            })),
+          },
+        });
+        break;
     }
   }
 

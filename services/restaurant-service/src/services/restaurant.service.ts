@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { CreateRestaurantFoodDto } from 'src/dto/create-restaurant-food.dto';
 import { CreateRestaurantMenuDto } from 'src/dto/create-restaurant-menu.dto';
 import { CreateRestaurantDto } from '../dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from '../dto/update-restaurant.dto';
 import { PrismaService } from './prisma.service';
 
-type ImportRestaurantDto = CreateRestaurantDto & { id: string }
+type ImportRestaurantDto = CreateRestaurantDto & { id: string };
 
 @Injectable()
 export class RestaurantService {
@@ -18,15 +17,15 @@ export class RestaurantService {
       create: {
         id,
         ...createRestaurantDto,
-        menu: {}
+        menu: {},
       },
       update: {},
       where: {
         name_address: {
           name: createRestaurantDto.name,
-          address: createRestaurantDto.address
-        }
-      }
+          address: createRestaurantDto.address,
+        },
+      },
     });
     return id;
   }
@@ -36,14 +35,14 @@ export class RestaurantService {
   }
 
   findOne(id: string) {
-    return this.prismaService.restaurant.findUnique({ where: { id }});
+    return this.prismaService.restaurant.findUnique({ where: { id } });
   }
 
   findMenu(restaurantId: string) {
     return this.prismaService.food.findMany({
       where: {
-        restaurantId
-      }
+        restaurantId,
+      },
     });
   }
 
@@ -51,15 +50,15 @@ export class RestaurantService {
     return this.prismaService.food.findFirst({
       where: {
         restaurantId,
-        id
-      }
+        id,
+      },
     });
   }
 
   update(id: string, updateRestaurantDto: UpdateRestaurantDto) {
     return this.prismaService.restaurant.update({
-      where: {id},
-      data: updateRestaurantDto
+      where: { id },
+      data: updateRestaurantDto,
     });
   }
 
@@ -68,19 +67,19 @@ export class RestaurantService {
       data: {
         menu: {
           createMany: {
-            data: createRestaurantMenuDto.menu
-          }
-        }
+            data: createRestaurantMenuDto.menu,
+          },
+        },
       },
       where: {
-        id
+        id,
       },
     });
   }
 
   remove(id: string) {
     return this.prismaService.restaurant.delete({
-      where: { id }
+      where: { id },
     });
   }
 
@@ -88,22 +87,27 @@ export class RestaurantService {
     return this.prismaService.restaurant.upsert({
       create: createRestaurantDto,
       update: {},
-      where: { name_address: {
-        name: createRestaurantDto.name,
-        address: createRestaurantDto.address
-      } }
+      where: {
+        name_address: {
+          name: createRestaurantDto.name,
+          address: createRestaurantDto.address,
+        },
+      },
     });
   }
 
-  async importMenu(id: string, createRestaurantMenuDto: CreateRestaurantMenuDto) {
+  async importMenu(
+    id: string,
+    createRestaurantMenuDto: CreateRestaurantMenuDto,
+  ) {
     await this.prismaService.food.deleteMany({
       where: {
-        restaurantId: id
-      }
-    })
+        restaurantId: id,
+      },
+    });
     return this.prismaService.food.createMany({
       data: createRestaurantMenuDto.menu,
-      skipDuplicates: true
+      skipDuplicates: true,
     });
   }
 }

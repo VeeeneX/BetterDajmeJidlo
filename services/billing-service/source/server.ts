@@ -1,7 +1,7 @@
 /** source/server.ts */
 import express, { Express } from 'express';
 import swaggerUi from 'swagger-ui-express';
-import * as swaggerDocument from '../source/swagger/openapi.json';
+import * as swaggerDocument from './swagger/openapi.json';
 import morganMiddleware from './config/morgan';
 import routes from './routes/invoices';
 
