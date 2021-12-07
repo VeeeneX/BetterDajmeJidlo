@@ -20,9 +20,7 @@
           </option>
           <option name="pomFileName" />
           <option name="profilesMap">
-            <map>
-              <entry key="native" value="true" />
-            </map>
+            <map />
           </option>
           <option name="resolveToWorkspace" value="false" />
           <option name="workingDirPath" value="$PROJECT_DIR$/services/delivery-service" />

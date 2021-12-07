@@ -21,6 +21,7 @@ This project was created as a part of the course PV217 - Service oriented archit
 
 ```
 docker network create better-dajme-jidlo
+docker-compose -f docker/swarmpit.yml up -d
 
 # Database
 docker-compose -f docker/database.yml up -d

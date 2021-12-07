@@ -1,0 +1,64 @@
+# 0. Pick a User for our use case
+GET user.service.local/users
+
+> {% client.global.set("user_id", response.body[0].id); %}
+> {% client.global.set("delivery_address", response.body[0].addr); %}
+> {% client.global.set("location", response.body[0].location); %}
+
+###
+# 1. User lists restaurants and picks the one that
+# match their preferences
+GET restaurant.service.local/restaurants
+
+> {% client.global.set("restaurant_id", response.body[0].id); %}
+###
+
+# 2. In order to make an order user lists the menu of the
+# restaurant
+GET restaurant.service.local/restaurants/{{restaurant_id}}/menu
+
+> {% client.global.set("food_id_1", response.body[0].id); %}
+> {% client.global.set("food_id_2", response.body[1].id); %}
+###
+
+# 3. User tops up the credit to make the order possible
+PUT payment.service.local/payments/v1/credits/
+Content-Type: application/json
+
+{
+  "userId": "{{user_id}}",
+  "creditCount": 250
+}
+
+###
+# 3. After picking the food user creates the order
+POST order.service.local/orders
+Content-Type: application/json
+
+{
+  "deliveryAddress": "{{delivery_address}}, {{location}}",
+  "userId": "{{user_id}}",
+  "restaurantId": "{{restaurant_id}}"
+}
+
+###
+# 4. Restaurants lists the orders
+GET order.service.local/orders
+
+> {% client.global.set("order_id", response.body[0].id); %}
+
+###
+# 5. Restaurant picks and order and set it to ACCEPTED
+PATCH order.service.local/orders/{{order_id}}
+Content-Type: application/json
+
+{
+  "state": "ACCEPTED"
+}
+
+###
+# 2. Remove credits from account
+GET payment.service.local/payments/v1/credits/d733fea4-54d1-4623-97bb-bbbcfae4801b
+Content-Type: application/json
+Accept: */*
+

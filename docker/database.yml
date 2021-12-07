@@ -13,14 +13,25 @@ services:
     networks:
       - better-dajme-jidlo
     ports:
-      - '127.0.20.0:9000:9000'
-      - '127.0.20.0:45077:45077'
+      - '9000:9000'
+      - '45077:45077'
     environment:
       MINIO_ROOT_USER: 'MW32h3gd6HvjBEgTRx'
       MINIO_ROOT_PASSWORD: 't6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7'
     volumes:
       - invoice-storage:/data
     command: server /data --console-address ":45077"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    deploy:
+      replicas: 1
+      placement:
+        max_replicas_per_node: 1
+      restart_policy:
+        condition: on-failure
 
   redis:
     image: redis:6.0-alpine
@@ -28,6 +39,20 @@ services:
       - better-dajme-jidlo
     ports:
       - '127.0.20.0:6379:6379'
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    deploy:
+      replicas: 1
+      placement:
+        max_replicas_per_node: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
 
   postgres:
     image: postgres:13-alpine
@@ -41,6 +66,17 @@ services:
       - POSTGRES_DB=bdj
     volumes:
       - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bdj"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      replicas: 1
+      placement:
+        max_replicas_per_node: 1
+      restart_policy:
+        condition: on-failure
 
   mongo:
     image: mongo:latest
@@ -50,3 +86,14 @@ services:
       - '127.0.20.0:27017:27017'
     environment:
       - MONGO_INITDB_DATABASE=payment-service
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "'db.runCommand(\"ping\").ok'", "localhost:27017/payment-service", "--quiet" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    deploy:
+      replicas: 1
+      placement:
+        max_replicas_per_node: 1
+      restart_policy:
+        condition: on-failure

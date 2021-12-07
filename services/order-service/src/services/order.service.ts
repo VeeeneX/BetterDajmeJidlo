@@ -30,17 +30,16 @@ export class OrderService {
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
-    const id = randomUUID();
-    await this.prismaService.order.upsert({
-      create: {
-        id,
+    const order = await this.prismaService.order.create({
+      data: {
         ...createOrderDto,
         state: OrderState.PENDING,
       },
-      update: {},
-      where: {},
+      select: {
+        id: true
+      }
     });
-    return id;
+    return order.id;
   }
 
   findAll() {
@@ -89,7 +88,7 @@ export class OrderService {
         const items: Item[] = await Promise.all(
           order.items.map(async (i): Promise<Item> => {
             const { data } = await this.restaurant(
-              `/restaurant/${order.restaurantId}/menu/${i.foodId}`,
+              `restaurant/${order.restaurantId}/menu/${i.foodId}`,
             ).json();
             return { i, ...data, price: i.quantity * +data.basePrice };
           }),
@@ -97,14 +96,14 @@ export class OrderService {
 
         const price = items.reduce((a, i) => a + i.price, 0);
 
-        await this.payment.post('/payments/v1/credits', {
+        await this.payment.post('payments/v1/credits', {
           json: {
             userId: order,
             creditAmount: price,
           },
         });
 
-        await this.billing.post('/invoice', {
+        await this.billing.post('invoice', {
           json: {
             user_id: order.userId,
             restaurant_id: order.restaurantId,

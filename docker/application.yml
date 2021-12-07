@@ -67,7 +67,10 @@ services:
     networks:
       - better-dajme-jidlo
     environment:
-      - DATABASE_URL=postgresql://order_service:order_service@postgres/order_service?schema=public
+      - DATABASE_URL=postgresql://bdj:bdj@postgres/order_service?schema=public
+      - BILLING_URL=http://billing-service:8080
+      - RESTAURANT_URL=http://restaurant-service:3002
+      - PAYMENT_URL=http://payment-service:8080
 
   delivery-service:
     image: delivery-service:latest
