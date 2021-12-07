@@ -58,7 +58,7 @@ services:
       - TZ="Europe/Prague"
       - RESTAURANT_SERVICE_URL=http://restaurant-service:3002/restaurants
       - USER_SERVICE_URL=http://user-service:3000/users
-      - MINIO_URL=http://MW32h3gd6HvjBEgTRx:t6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7@minio
+      - MINIO_URL=http://MW32h3gd6HvjBEgTRx:t6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7@minio:9000
 
   order-service:
     image: order-service:latest
