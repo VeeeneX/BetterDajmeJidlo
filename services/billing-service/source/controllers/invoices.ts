@@ -49,6 +49,13 @@ const generateInvoice = async (req: Request, res: Response) => {
             amount: (product.cost * Math.round(product.quantity)).toFixed(2)
         }));
 
+    invoice_rest.data.comp_reg = "betterdajmejidlo, s.r.o"
+    invoice_rest.data.b_name = "Building 1/A"
+    invoice_rest.data.addr = invoice_rest.data.address.split('\n')[0]
+    invoice_rest.data.location = invoice_rest.data.address.split('\n').split(',')[0]
+        + invoice_rest.data.address.split(' ')[6]
+    invoice_rest.data.zip = invoice_rest.data.address.split(' ').slice(-1)[0]
+
     const data = {
         id: short().generate().toString(),
         client: invoice_user.data,
