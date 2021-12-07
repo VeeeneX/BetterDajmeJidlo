@@ -12,12 +12,13 @@ services:
     image: minio/minio
     ports:
       - '127.0.20.0:9000:9000'
+      - '127.0.20.0:45077:45077'
     environment:
       MINIO_ROOT_USER: 'MW32h3gd6HvjBEgTRx'
       MINIO_ROOT_PASSWORD: 't6NgQWUcEyG2AzaDCVkN6sbWcvDCVkN6sGiZ7'
     volumes:
       - invoice-storage:/data
-    command: server /data
+    command: server /data --console-address ":45077"
 
   redis:
     image: redis:6.0-alpine
